@@ -53,14 +53,18 @@ export async function getInitialState(): Promise<{
 
 const logMiddleware = async (ctx: Context, next: () => void) => {
     /* eslint no-console: ["error", { allow: ["log","warn", "error"] }] */
-    console.log("发送请求: ", ctx.req)
-    next()
-    console.log("响应结果: ", ctx.res)
+    if (isDev) {
+      console.log("发送请求: ", ctx.req);
+    }
+    await next();
+    if (isDev) {
+      console.log("响应结果: ", ctx.res);
+    }
 };
 
 const authHeaderInterceptor = (url: string, options: RequestOptionsInit) => {
   const token = localStorage.getItem('token') || '';
-  const authHeader = { Authorization: `Bearer ${token}` };
+  const authHeader = { Authorization: `Bearer ${token}`,  Token: token};
   return {
     url: `${url}`,
     options: { ...options, interceptors: true, headers: authHeader },
@@ -118,6 +122,7 @@ export const request: RequestConfig = {
     }
     throw error;
   },
+  middlewares: [logMiddleware],
   requestInterceptors: [authHeaderInterceptor]
 };
 
