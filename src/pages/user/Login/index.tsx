@@ -62,7 +62,8 @@ const Login: React.FC = () => {
           id: 'pages.login.success',
           defaultMessage: '登录成功！',
         });
-        localStorage.setItem('token', 'asdasdasdasd')
+        
+        localStorage.setItem('token', msg.token ? msg.token : 'undefined')
         message.success(defaultloginSuccessMessage);
         await fetchUserInfo();
         goto();
